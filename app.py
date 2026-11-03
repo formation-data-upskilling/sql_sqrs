@@ -3,13 +3,6 @@ import pandas as pd
 import duckdb
 import io
 
-csv = """
-beverage,price
-orange juice,2.5
-Expresso,2
-Tea,3
-"""
-beverages = pd.read_csv(io.StringIO(csv))
 
 csv2 = """
 food_item,food_price
@@ -19,10 +12,28 @@ muffin,3
 """
 food_items = pd.read_csv(io.StringIO(csv2))
 
+csv = """
+beverage,price
+orange juice,2.5
+Expresso,2
+Tea,3"""
+beverages = pd.read_csv(io.StringIO(csv))
+
 answer = """
 SELECT * FROM beverages
 CROSS JOIN food_items
 """
+
+
+with st.sidebar :
+    options = st.selectbox(
+        "What would you like to review ?",
+        ["Join", "Group by", "Windows Functions"],
+        index=None,
+        placeholder="Select a theme to review"
+    )
+    st.write("You have selected : ", options)
+
 
 solution = duckdb.sql(answer).df()
 
