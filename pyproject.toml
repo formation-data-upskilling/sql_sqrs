@@ -9,3 +9,10 @@ dependencies = [
     "pandas>=3.0.6",
     "streamlit>=1.66.0",
 ]
+
+[dependency-groups]
+dev = [
+    "black>=26.10.1",
+    "isort>=9.0.2",
+    "pylint>=4.1.3",
+]
