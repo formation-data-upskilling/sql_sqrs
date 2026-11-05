@@ -3,6 +3,7 @@
 import duckdb
 import pandas as pd
 import streamlit as st
+import ast
 
 
 con = duckdb.connect(database="data/exercises_sql_tables.duckdb", read_only=False)
@@ -19,8 +20,11 @@ with st.sidebar:
         index=None,
         placeholder="Select a theme to review",
     )
+    if theme is None:
+        st.info("Select a theme to start.")
+        st.stop()
     st.write("You have selected : ", theme)
-    exercise =con.execute(f"SELECT * FROM memory_state WHERE theme = '{theme}'")
+    exercise = con.execute(f"SELECT * FROM memory_state WHERE theme = '{theme}'").df()
     st.write("You have selected : ", exercise)
 
 
@@ -44,15 +48,19 @@ if query:
 #     if n_lines_difference != 0:
 #         st.write(f"result has a {n_lines_difference} lines difference with solution_df")
 
-# tab2, tab3 = st.tabs(["Tables", "answer"])
+tab2, tab3 = st.tabs(["Tables", "answer"])
 
-# with tab2:
-#     st.write("table: beverages")
-#     st.dataframe(beverages)
-#     st.write("table: food_items")
-#     st.dataframe(food_items)
+with tab2:
+    exercice_tables = exercise.loc[0, "tables"]
+    for table in exercice_tables:
+        st.write(f"table: {table}")
+        df_table = con.execute(f"SELECT * FROM {table}").df()
+        st.dataframe(df_table)
 #     st.write("solution_df Expected")
 #     st.dataframe(solution_df)
 
-# with tab3:
-#     st.write(ANSWER_STR)
+with tab3:
+     exercise_name = exercise.loc[0, "exercise_name"]
+     with open(f"answers/{exercise_name}.sql", "r") as f:
+         answer = f.read()
+     st.write(ANSWER_STR)
